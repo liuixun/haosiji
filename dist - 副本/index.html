@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>SDLG好司机</title>
+    <!--http://www.html5rocks.com/en/mobile/mobifying/-->
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1,target-densitydpi=device-dpi"
+    />
+    <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <!-- force webkit on 360 -->
+    <meta name="renderer" content="webkit" />
+    <meta name="force-rendering" content="webkit" />
+    <!-- force edge on IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="msapplication-tap-highlight" content="no">
+    <!-- force full screen on some browser -->
+    <meta name="full-screen" content="yes" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+    <!-- force screen orientation on some browser -->
+    <!-- portrait - 竖屏 landscape - 横屏 -->
+    <meta name="screen-orientation" content="landscape" />
+    <meta name="x5-orientation" content="landscape">
+    <meta name="browsermode" content="application">
+    <meta name="x5-page-mode" content="app">
+    <bgsound loop="-1" src="./mp3/1.mp3"></bgsound>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* music */
+
+        @-webkit-keyframes reverseRotataZ {
+            0% {
+                -webkit-transform: rotateZ(0deg);
+            }
+            100% {
+                -webkit-transform: rotateZ(-360deg);
+            }
+        }
+
+        @-webkit-keyframes rotataZ {
+            0% {
+                -webkit-transform: rotateZ(0deg);
+            }
+            100% {
+                -webkit-transform: rotateZ(360deg);
+            }
+        }
+
+        #musicControl {
+            position: fixed;
+            right: 10px;
+            top: 20px;
+            margin-top: 0;
+            display: inline-block;
+            z-index: 99999999
+        }
+
+        #musicControl a {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            overflow: hidden;
+            background: url('./assets/img/play.png') no-repeat;
+            background-size: 100%;
+        }
+
+        #musicControl a audio {
+            width: 100%;
+            height: 56px;
+        }
+
+        #musicControl a.stop {
+            background-position: left bottom;
+        }
+
+        #musicControl a.on {
+            background-position: 0px 1px;
+            -webkit-animation: reverseRotataZ 1.2s linear infinite;
+        }
+
+        #music_play_filter {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 99999998;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <span id="musicControl">
+        <a id="mc_play" class="on" onclick="play_music();">
+            <audio id="musicfx" loop="loop" autoplay="autoplay">
+                <source src="./mp3/1.mp3" type="audio/mpeg">
+            </audio>
+        </a>
+    </span>
+    <script src="./js/jquery-2.2.3.min.js"></script>
+    <script src="./js/phaser.min.js"></script>
+    <script type="text/javascript" src="app.min.js"></script>
+
+    <!-- music -->
+    <script>
+        function play_music() {
+            if ($('#mc_play').hasClass('on')) {
+                $('#mc_play audio').get(0).pause();
+                $('#mc_play').attr('class', 'stop');
+            } else {
+                $('#mc_play audio').get(0).play();
+                $('#mc_play').attr('class', 'on');
+            }
+            $('#music_play_filter').hide();
+            event.stopPropagation(); //阻止冒泡
+        }
+
+        function just_play(id) {
+            $('#mc_play audio').get(0).play();
+            $('#mc_play').attr('class', 'on');
+            if (typeof (id) != 'undefined') {
+                $('#music_play_filter').hide();
+            }
+            event.stopPropagation(); //阻止冒泡
+        }
+
+        function is_weixn() {
+            return false;
+            var ua = navigator.userAgent.toLowerCase();
+            if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        var play_filter = document.getElementById('music_play_filter');
+        play_filter.addEventListener('click', function () {
+            just_play(1);
+        });
+        play_filter.addEventListener('touchstart', function () {
+            just_play(1);
+        });
+        play_filter.addEventListener('touchend', function () {
+            just_play(1);
+        });
+        play_filter.addEventListener('touchmove', function () {
+            just_play(1);
+        });
+        play_filter.addEventListener('mousedown', function () {
+            just_play(1);
+        });
+        play_filter.addEventListener('mouseup', function () {
+            just_play(1);
+        });
+        play_filter.addEventListener('mousemove', function () {
+            just_play(1);
+        });
+        // window.onload = function () {
+        //     if (!is_weixn()) {
+        //         just_play();
+        //     }
+        // }
+    </script>
+</body>
+
+</html>
