@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <title>SDLG好司机</title>
     <!--http://www.html5rocks.com/en/mobile/mobifying/-->
-    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1,target-densitydpi=device-dpi"/>
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1,target-densitydpi=device-dpi"
+    />
     <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,11 +27,24 @@
     <meta name="x5-orientation" content="landscape">
     <meta name="browsermode" content="application">
     <meta name="x5-page-mode" content="app">
+    <script type="text/javascript">
+        // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
+        var useragent = navigator.userAgent;
+        if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
+            // 这里警告框会阻塞当前页面继续加载
+            alert('已禁止本次访问：您必须使用微信内置浏览器访问本页面！');
+            // 以下代码是用javascript强行关闭当前页面
+            var opened = window.open('about:blank', '_self');
+            opened.opener = null;
+            opened.close();
+        }
+    </script>
     <style>
-        html{
+        html {
             width: 100%;
             height: 100%;
         }
+
         body {
             margin: 0;
             padding: 0;
@@ -38,7 +52,6 @@
             background-position: center 0;
             background-size: cover;
             width: 100%;
-            height: 100%;
         }
 
         /* music */
@@ -102,48 +115,74 @@
             left: 0;
             z-index: 99999998;
         }
-        .btn_again{
+
+        .btn_again {
             width: 110px;
             height: 67px;
             border: none;
-            border-radius: 39px;
-            background-image: url("./assets/img/btn_again.jpg");
+            border-radius: 25px;
+            background-image: url("./assets/img/btn_again.png");
             background-size: 100% 100%;
             float: left;
+            margin-bottom: 50px;
         }
-        .btn_share{
+
+        .btn_share {
             width: 110px;
             height: 67px;
             border: none;
-            border-radius: 39px;
+            border-radius: 25px;
             background-image: url("./assets/img/btn_share.png");
             background-size: 100% 100%;
             float: left;
             margin-left: 30px;
         }
-        .btn{
-            bottom: 11%;
-            left: 15%;
+
+        .btn {
+            bottom: 5%;
+            left: 39%;
             position: absolute;
+        }
+        .num{
+            font-size: 50px;
+            margin-top: 55%;
+            text-align: center;
+        }
+        .record{
+            margin-left: 10px;
         }
     </style>
 </head>
 
 <body>
+    
     <div id="container"></div>
     <span id="musicControl">
         <a id="mc_play" class="on" onclick="play_music();">
-            <audio id="musicfx" loop="loop" autoplay="autoplay">
-                <source src="./mp3/1.mp3" type="audio/mpeg">
+            <audio id="musicfx" autoplay="autoplay">
+                <source src="./mp3/result.mp3" type="audio/mpeg">
             </audio>
         </a>
     </span>
+    <h2 id= "amount" class="num"></h2>
     <div class="btn">
-        <button class="btn_again" onclick="javascript:location.href='./autoIndex.html'"></button>
-        <button class="btn_share" onclick=""></button>
+        <button class="btn_again" onclick="btn_next()"></button>
+        <!-- <button class="btn_share" onclick="share_click()"></button> -->
+   
+        </br>
+        <a class="record" href="./record.html">查看游戏记录</a>
     </div>
+    <script src="./js/jquery-2.2.3.min.js"></script>
     <!-- music -->
     <script>
+        window.onload = function () {
+            document.getElementById("amount").innerText = window.localStorage.getItem("sum");
+            var tel = window.localStorage.getItem("telphone");
+            console.log(tel)
+        }
+        function btn_next(){
+            window.location.href = "./index.html?_r=" + Math.random();
+        }
         function play_music() {
             if ($('#mc_play').hasClass('on')) {
                 $('#mc_play audio').get(0).pause();
@@ -163,6 +202,10 @@
                 $('#music_play_filter').hide();
             }
             event.stopPropagation(); //阻止冒泡
+        }
+
+        function share_click() {
+
         }
 
         function is_weixn() {
@@ -196,12 +239,7 @@
         play_filter.addEventListener('mousemove', function () {
             just_play(1);
         });
-        window.onload = function () {
-            just_play(1);
-            // if (!is_weixn()) {
-            //     just_play();
-            // }
-        }
+        
     </script>
 </body>
 

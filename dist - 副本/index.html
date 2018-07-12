@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <title>SDLG好司机</title>
     <!--http://www.html5rocks.com/en/mobile/mobifying/-->
-    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1,target-densitydpi=device-dpi"
-    />
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,initial-scale=1, minimum-scale=1,maximum-scale=1,target-densitydpi=device-dpi"/>
     <!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -27,10 +26,31 @@
     <meta name="x5-orientation" content="landscape">
     <meta name="browsermode" content="application">
     <meta name="x5-page-mode" content="app">
+    <script type="text/javascript">
+        // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
+        var useragent = navigator.userAgent;
+        if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
+            // 这里警告框会阻塞当前页面继续加载
+            alert('已禁止本次访问：您必须使用微信内置浏览器访问本页面！');
+            // 以下代码是用javascript强行关闭当前页面
+            var opened = window.open('about:blank', '_self');
+            opened.opener = null;
+            opened.close();
+        }
+    </script>
     <style>
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
         body {
             margin: 0;
             padding: 0;
+            background: url(./assets/img/bg1.jpg) no-repeat center 0px;
+            background-position: center 0;
+            background-size: cover;
+            width: 100%;
         }
 
         /* music */
@@ -94,14 +114,49 @@
             left: 0;
             z-index: 99999998;
         }
-        #end{
-            display: none;
+
+        .btn_start {
+            width: 150px;
+            height: 67px;
+            border: none;
+            border-radius: 29px;
+            background-image: url("./assets/img/btn_start.png");
+            background-size: 100% 100%;
+            margin-top: 15px;
+        }
+
+        .teltext {
+            margin-bottom: 10px;
+            height: 30px;
+            font-size: 15px;
+            text-align: center;
+            width: 150px;
+        }
+
+        .btn {
+            bottom: 7%;
+            position: absolute;
+            text-align: center;
+            width: 100%;
+        }
+
+        .game {
+            bottom: 0px;
+            font-size: 12px;
+            color: black;
+            margin-left: 10px;
+            position: absolute;
+        }
+
+
+        .btn label {
+            font-size: small;
         }
     </style>
 </head>
 
 <body>
-    <div id="container"></div>
+    <!--
     <span id="musicControl">
         <a id="mc_play" class="on" onclick="play_music();">
             <audio id="musicfx" loop="loop" autoplay="autoplay">
@@ -109,69 +164,110 @@
             </audio>
         </a>
     </span>
+-->
+    <audio id="a1" src="./mp3/a1.mp3"></audio>
+    <div class="btn">
+        <input class="teltext" type="tel" placeholder="请输入手机号">
+    </br>
+        <button class="btn_start" onclick="btn_start()"></button>
+        </br>
+        <input id="ck_game" type="checkbox" name="ck_game" checked/>
+        <label>我已阅读并同意<a href="./info.html">《活动声明》</a></label>
+    </div>
     <script src="./js/jquery-2.2.3.min.js"></script>
-    <script src="./js/phaser.min.js"></script>
-    <script type="text/javascript" src="app.min.js"></script>
-
     <!-- music -->
     <script>
-        function play_music() {
-            if ($('#mc_play').hasClass('on')) {
-                $('#mc_play audio').get(0).pause();
-                $('#mc_play').attr('class', 'stop');
-            } else {
+        function btn_start() {
+            var telphone = document.getElementsByClassName("teltext")[0].value;
+            console.log(telphone)
+            var flag = $("#ck_game").prop('checked');
+            if (telphone.length != 11 || !flag) {
+                return;
+            }
+            window.localStorage.setItem("telphone", telphone);
+            window.location.href = "./main.html";
+        }
+        window.onload = function () {
+            var tel = window.localStorage.getItem("telphone");
+            document.getElementsByClassName("teltext")[0].value = tel;
+
+            setTimeout(function () {
+
+                // reference to <head>
+                var head = document.getElementsByTagName('head')[0];
+
+                // a new JS
+                var js = document.createElement("script");
+                js.type = "text/javascript";
+                js.src = "./js/phaser.min.js";
+                var js1 = document.createElement("script");
+                js1.type = "text/javascript";
+                js1.src = "./js/jquery-2.2.3.min.js";
+
+                // preload JS and CSS
+                head.appendChild(js);
+                head.appendChild(js1);
+
+                // preload image
+                new Image().src = "./assets/img/bg.png";
+
+            }, 1000);
+
+            function play_music() {
+                if ($('#mc_play').hasClass('on')) {
+                    $('#mc_play audio').get(0).pause();
+                    $('#mc_play').attr('class', 'stop');
+                } else {
+                    $('#mc_play audio').get(0).play();
+                    $('#mc_play').attr('class', 'on');
+                }
+                $('#music_play_filter').hide();
+                event.stopPropagation(); //阻止冒泡
+            }
+
+            function just_play(id) {
                 $('#mc_play audio').get(0).play();
                 $('#mc_play').attr('class', 'on');
+                if (typeof (id) != 'undefined') {
+                    $('#music_play_filter').hide();
+                }
+                event.stopPropagation(); //阻止冒泡
             }
-            $('#music_play_filter').hide();
-            event.stopPropagation(); //阻止冒泡
-        }
 
-        function just_play(id) {
-            $('#mc_play audio').get(0).play();
-            $('#mc_play').attr('class', 'on');
-            if (typeof (id) != 'undefined') {
-                $('#music_play_filter').hide();
-            }
-            event.stopPropagation(); //阻止冒泡
-        }
-
-        function is_weixn() {
-            return false;
-            var ua = navigator.userAgent.toLowerCase();
-            if (ua.match(/MicroMessenger/i) == "micromessenger") {
-                return true;
-            } else {
+            function is_weixn() {
                 return false;
+                var ua = navigator.userAgent.toLowerCase();
+                if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                    return true;
+                } else {
+                    return false;
+                }
             }
-        }
-        var play_filter = document.getElementById('music_play_filter');
-        play_filter.addEventListener('click', function () {
-            just_play(1);
-        });
-        play_filter.addEventListener('touchstart', function () {
-            just_play(1);
-        });
-        play_filter.addEventListener('touchend', function () {
-            just_play(1);
-        });
-        play_filter.addEventListener('touchmove', function () {
-            just_play(1);
-        });
-        play_filter.addEventListener('mousedown', function () {
-            just_play(1);
-        });
-        play_filter.addEventListener('mouseup', function () {
-            just_play(1);
-        });
-        play_filter.addEventListener('mousemove', function () {
-            just_play(1);
-        });
-        window.onload = function () {
-            just_play(1);
-            // if (!is_weixn()) {
-            //     just_play();
-            // }
+            var play_filter = document.getElementById('music_play_filter');
+            play_filter.addEventListener('click', function () {
+                just_play(1);
+            });
+            play_filter.addEventListener('touchstart', function () {
+                just_play(1);
+            });
+            play_filter.addEventListener('touchend', function () {
+                just_play(1);
+            });
+            play_filter.addEventListener('touchmove', function () {
+                just_play(1);
+            });
+            play_filter.addEventListener('mousedown', function () {
+                just_play(1);
+            });
+            play_filter.addEventListener('mouseup', function () {
+                just_play(1);
+            });
+            play_filter.addEventListener('mousemove', function () {
+                just_play(1);
+            });
+
+
+
         }
     </script>
 </body>

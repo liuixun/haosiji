@@ -1,0 +1,14 @@
+:
+好司机服务器IP地址：
+192.168.1.65 root/Haosiji@123
+
+haosiji/haosiji@123
+:
+ORACLE数据库：
+lghsj/lghsj
+
+
+TBS_PERM_HSJ表空间
+
+
+60.213.13.12外网IP地址

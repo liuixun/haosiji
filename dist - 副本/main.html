@@ -28,18 +28,9 @@
     <meta name="browsermode" content="application">
     <meta name="x5-page-mode" content="app">
     <style>
-        html{
-            width: 100%;
-            height: 100%;
-        }
         body {
             margin: 0;
             padding: 0;
-            background: url(./assets/img/start.jpg) no-repeat center 0px;
-            background-position: center 0;
-            background-size: cover;
-            width: 100%;
-            height: 100%;
         }
 
         /* music */
@@ -104,37 +95,39 @@
             z-index: 99999998;
         }
 
-        .btn_start{
-            width: 150px;
-            height: 67px;
-            border: none;
-            border-radius: 39px;
-            background-image: url("./assets/img/btn_start.png");
-        }
-        
-        .btn{
-            bottom: 11%;
-            left: 32%;
-            position: absolute;
+        #end {
+            display: none;
         }
     </style>
 </head>
 
-<body >
+<body>
+    <script type="text/javascript">
+        // 对浏览器的UserAgent进行正则匹配，不含有微信独有标识的则为其他浏览器
+        var useragent = navigator.userAgent;
+        if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
+            // 这里警告框会阻塞当前页面继续加载
+            alert('已禁止本次访问：您必须使用微信内置浏览器访问本页面！');
+            // 以下代码是用javascript强行关闭当前页面
+            var opened = window.open('about:blank', '_self');
+            opened.opener = null;
+            opened.close();
+        }
+    </script>
+    <div id="container"></div>
     <span id="musicControl">
         <a id="mc_play" class="on" onclick="play_music();">
-            <audio id="musicfx" loop="loop" autoplay="autoplay">
+            <audio id="musicfx" loop="loop" preload="preload">
                 <source src="./mp3/1.mp3" type="audio/mpeg">
-            </audio>
-            <audio controls="controls" preload="auto">
-                <source src="./mp3/1.mp3" type="audio/mpeg" />
             </audio>
         </a>
     </span>
-    <div class="btn">
-        <button class="btn_start" onclick="javascript:location.href='./index.html'"></button>
-    </div>
-    
+    <audio id="audio1" src="./mp3/a2.mp3"></audio>
+    <audio id="ready" autoplay="autoplay" src="./mp3/ready.mp3"></audio>
+    <script src="./js/jquery-2.2.3.min.js"></script>
+    <script src="./js/phaser.min.js"></script>
+    <script type="text/javascript" src="app.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
     <!-- music -->
     <script>
         function play_music() {
@@ -156,6 +149,22 @@
                 $('#music_play_filter').hide();
             }
             event.stopPropagation(); //阻止冒泡
+        }
+        window.onload = function () {
+            var tel = window.localStorage.getItem("telphone");
+            console.log(tel)
+            if(tel == null || tel == ""){
+                window.location.href = "./index.html";
+            }
+
+            var ready = document.getElementById("ready");
+        
+            document.addEventListener("WeixinJSBridgeReady", function () {
+                ready.play();
+            }, false);
+            setTimeout(function () {
+                $('#mc_play audio').get(0).play();
+            }, 3000);
         }
 
         function is_weixn() {
@@ -189,33 +198,6 @@
         play_filter.addEventListener('mousemove', function () {
             just_play(1);
         });
-        window.onload = function () {
-            //just_play();
-
-            setTimeout(function () {
-
-                // reference to <head>
-                var head = document.getElementsByTagName('head')[0];
-
-                // a new JS
-                var js = document.createElement("script");
-                js.type = "text/javascript";
-                js.src = "./js/phaser.min.js";
-                var js1 = document.createElement("script");
-                js1.type = "text/javascript";
-                js1.src = "./js/jquery-2.2.3.min.js";
-
-                // preload JS and CSS
-                head.appendChild(js);
-                head.appendChild(js1);
-
-                // preload image
-                new Image().src = "./assets/img/bg.png";
-
-            }, 1000);
-
-
-        }
     </script>
 </body>
 
