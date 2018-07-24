@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>SDLG好司机排行榜</title>
+
+</head>
+<style type="text/css">
+    html {
+        height: 100%;
+        width: 100%;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: url(./assets/img/bg.jpg) no-repeat center 0px;
+        background-attachment: fixed;
+        background-position: center 0;
+        background-size: cover;
+        width: 100%;
+    }
+
+    .tdClass {
+        width: 26vw;
+        border: 1px solid #cccccc
+    }
+</style>
+
+<body>
+    <div style="color: #FF6600;font-size: 6.5vw;width: 100%;text-align: center;margin-top: 2vw">游戏排行榜</div>
+    <!-- <div style="font-size: 4.2666vw;text-align: center;margin: 7vw 0">TEL:
+		<span id="teltext"></span>
+		<p id="sumpoint"></p>
+	</div> -->
+    <table id="group" style="width: 60vw;display: flex;margin: auto;text-align: center;border-collapse:collapse;">
+        <tr>
+            <td class="tdClass">序号</td>
+            <td class="tdClass">手机号</td>
+            <td class="tdClass">装载机总数</td>
+            <td class="tdClass">挖掘机总数</td>
+            <td class="tdClass">临工logo总数</td>
+            <td class="tdClass">好司机总数</td>
+            <td class="tdClass">总额</td>
+        </tr>
+    </table>
+
+    <script type="text/javascript" src="./js/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript">
+        var groupTable = $('#group');
+        var tel = window.localStorage.getItem("telphone");
+
+        $.ajax({
+            type: "GET",
+            url: "http://haosiji.sdlg.cn:8090/goodDriver/1.0/driverGameInfo/top",
+            contentType: 'application/json; charset=UTF-8',
+            dataType: "json",
+            success: function (data) {
+                for (var i = 1; i <= data.length; i++) {
+                    var item = data[i - 1];
+                    groupTable.append('<tr> ' +
+                        '<td class="tdClass">' + i + '</td>' +
+                        '<td class="tdClass">' + item.tel + '</td>' +
+                        '<td class="tdClass">' + item.wheel + '</td>' +
+                        '<td class="tdClass">' + item.digger + '</td>' +
+                        '<td class="tdClass">' + item.lglogo + '</td>' +
+                        '<td class="tdClass">' + item.gooddriver + '</td>' +
+                        '<td class="tdClass">' + item.amount * 5 + '</td>' +
+                        '</td>' +
+                        '</tr>')
+                }
+            },
+            error: function () {
+                alert("服务维护中···")
+                window.location.href = './index.html';
+            }
+
+        });
+    </script>
+</body>
+
+</html>
