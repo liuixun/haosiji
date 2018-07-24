@@ -37,6 +37,7 @@
             margin: 0;
             padding: 0;
             background: url(./assets/img/bg.jpg) no-repeat center 0px;
+			background-attachment:fixed;
             background-position: center 0;
             background-size: cover;
             width: 100%;
@@ -45,12 +46,16 @@
 		width: 26vw;
 		border: 1px solid #cccccc
 	}
+	.tdtime{
+		border: 1px solid #cccccc
+	}
 </style>
 
 <body>
 	<div style="color: #FF6600;font-size: 6.5vw;width: 100%;text-align: center;margin-top: 8vw">游戏记录总分</div>
-	<div style="font-size: 4.2666vw;text-align: center;margin: 7vw 0">
+	<div style="font-size: 4.2666vw;text-align: center;margin: 7vw 0">TEL:
 		<span id="teltext"></span>
+		<p id="sumpoint"></p>
 	</div>
 	<table id="group" style="width: 80vw;display: flex;margin: auto;font-size: 3.5vw;text-align: center;border-collapse:collapse;">
 		<tr>
@@ -60,7 +65,7 @@
 			<td class="tdClass">临工logo</td>
 			<td class="tdClass">好司机</td>
 			<td class="tdClass">总额</td>
-			<td class="tdClass">时间</td>
+			<td class="tdtime" width="200">时间</td>
 		</tr>
 	</table>
 
@@ -77,6 +82,7 @@
 			dataType: "json",
 			success: function (data) {
 				document.getElementById("teltext").innerHTML = data[0].tel;
+				var sum = 0;
 				for (var i = 1; i <= data.length; i++) {
 					var item = data[i - 1];
 					groupTable.append('<tr> ' +
@@ -88,13 +94,16 @@
 						'<td class="tdClass">' + item.amount*5 + '</td>' +
 						'<td class="tdClass">' + moment(item.time).format('YYYY-MM-DD HH:mm:ss') +'</td>' +
 						'</tr>')
+					sum +=item.amount*5;
 				}
-		
+				
+				document.getElementById("sumpoint").innerHTML = sum;
 			},
 			error: function () {
 				alert("服务维护中···")
 				window.location.href = './index.html';
 			}
+			
 		});
 	</script>
 </body>

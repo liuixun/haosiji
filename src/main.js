@@ -1,9 +1,6 @@
 (function (win, $) {
     var winW = $(window).width();
     var winH = $(window).height();
-    var audio1 = document.getElementById("audio1");
-    var audio2 = new Audio();
-    audio2.src = "./mp3/a1.mp3"
     var score = 0;
     var wheel = 0;
     var digger = 0;
@@ -11,14 +8,15 @@
     var gooddriver = 0;
     var QingLvGroup;
     var hitNum = 0;
+    var sound = '';
     //挖掘机
     var config = {
         num: 1,
         selfPool: 30,
-        selfPic: 'qinglvdog',
-        rate: 2.5,
-        maxSpeed: 500,
-        minSpeed: 400,
+        selfPic: 'digger',
+        rate: 1.7,
+        maxSpeed: 1100,
+        minSpeed: 1000,
         max: 95,
         point: 1
     }
@@ -26,10 +24,10 @@
     var config1 = {
         num: 2,
         selfPool: 300,
-        selfPic: 'qinglv1',
+        selfPic: 'wheel',
         rate: 1,
-        maxSpeed: 600,
-        minSpeed: 500,
+        maxSpeed: 960,
+        minSpeed: 810,
         max: 95,
         point: 2
     }
@@ -37,10 +35,10 @@
     var config2 = {
         num: 3,
         selfPool: 30,
-        selfPic: 'qinglv2',
+        selfPic: 'gooddriver',
         rate: 5.5,
-        maxSpeed: 550,
-        minSpeed: 500,
+        maxSpeed: 2600,
+        minSpeed: 2350,
         max: 95,
         point: 3
     }
@@ -48,22 +46,22 @@
     var config3 = {
         num: 4,
         selfPool: 30,
-        selfPic: 'qinglv3',
-        rate: 15.5,
-        maxSpeed: 600,
-        minSpeed: 550,
+        selfPic: 'lglogo',
+        rate: 8.5,
+        maxSpeed: 1960,
+        minSpeed: 1130,
         max: 95,
         point: 3
     }
     var dogConfig = {
         selfPool: 20,
-        selfPic: 'dog',
+        selfPic: 'gold',
         rate: 0.3,
         maxSpeed: 300,
         minSpeed: 100,
         punished: true
     }
-    var time = 30;
+    var time = 40;
 
     var radio = winW / 375;
 
@@ -81,10 +79,10 @@
             QingLvGroup.setAll('anchor.y', 1)
             QingLvGroup.setAll('outOfBoundsKill', true);
             QingLvGroup.setAll('checkWorldBounds', true);
-            this.maxWidth = game.width - 80;
+            this.maxWidth = game.width - 100;
+            sound = game.add.audio('sound');
             //0.5秒掉一个
             game.time.events.loop(Phaser.Timer.SECOND * config.rate, this.createQL, this);
-
         };
         this.createQL = function () {
             var e = QingLvGroup.getFirstExists(false);
@@ -110,6 +108,8 @@
         };
         this.hitted = function (sprite) {
             score += sprite.config.point;
+            //audio1.play();
+            sound.play();
             switch (sprite.config.num) {
                 case 1:
                     digger++;
@@ -126,13 +126,7 @@
             sprite.inputEnabled = false;
             var anim = sprite.animations.add('hitted');
             sprite.play('hitted', 100, false);
-            anim.onComplete.add(this.fade, this, sprite)
-            
-            if(sprite.config.num == 2){
-                audio1.play();
-            }else{
-                audio2.play();
-            }
+            anim.onComplete.add(this.fade, this, sprite)    
         };
         this.fade = function (sprite) {
             var tween = game.add.tween(sprite).to({
@@ -180,7 +174,6 @@
 
     game.States = {};
 
-
     game.States.boot = function () {
         this.preload = function () {
             if (typeof (GAME) !== "undefined") {
@@ -202,13 +195,14 @@
         this.preload = function () {
             game.load.spritesheet('daojishi', 'assets/img/daojishi.png', 200, 200, 3);
             game.load.image('bg', 'assets/img/bg.jpg');
-            game.load.image('qinglvdog', 'assets/img/qinglv.png');
-            game.load.image('qinglv1', 'assets/img/1.png');
-            game.load.image('qinglv2', 'assets/img/2.png');
-            game.load.image('qinglv3', 'assets/img/3.png');
-            game.load.image('dog', 'assets/img/dog.png');
-            game.load.image('logo', 'assets/img/logo.png');
-            game.load.image('shengyu', 'assets/img/shengyu.png');
+            game.load.spritesheet('digger', 'assets/img/digger.png',200,150,2);
+            game.load.spritesheet('wheel', 'assets/img/wheel.png',200,150,2);
+            game.load.spritesheet('gooddriver', 'assets/img/gooddriver.png',200,150,2);
+            game.load.spritesheet('lglogo', 'assets/img/lglogo.png',157,150,2);
+            game.load.image('gold', 'assets/img/gold.png');
+            game.load.audio('sound', './mp3/a1.mp3');
+            // game.load.image('logo', 'assets/img/logo.png');
+            // game.load.image('shengyu', 'assets/img/shengyu.png');
             // game.load.image('chaisan', '');
             game.load.bitmapFont('number', 'assets/img/number.png', 'assets/img/number.xml');
         };
@@ -231,8 +225,8 @@
             bg.height = game.height;
 
             // logo
-            var logo = game.add.sprite(game.world.centerX - game.cache.getImage('logo').width / 2 * 0.6, 0, 'logo')
-            logo.scale.setTo(0.6)
+            // var logo = game.add.sprite(game.world.centerX - game.cache.getImage('logo').width / 2 * 0.6, 0, 'logo')
+            // logo.scale.setTo(0.6)
 
             // 开始游戏倒计时
             var daojishi = game.add.sprite(game.world.centerX - 100, game.world.centerY - 100, 'daojishi');
@@ -241,10 +235,10 @@
             anim.onComplete.add(this.startGame, this, daojishi);
 
             // 游戏结束倒计时
-            var shengyu = game.add.sprite(0, 0, 'shengyu');
-            shengyu.fixedToCamera = true;
-            shengyu.scale.setTo(rfuc(0.75))
-            shengyu.cameraOffset.setTo(game.camera.width - rfuc(150), game.camera.height - rfuc(85));
+            // var shengyu = game.add.sprite(0, 0, 'shengyu');
+            // shengyu.fixedToCamera = true;
+            // shengyu.scale.setTo(rfuc(0.75))
+            // shengyu.cameraOffset.setTo(game.camera.width - rfuc(150), game.camera.height - rfuc(85));
             // 已拆散
             // var chaisan = game.add.sprite(0, 0, 'chaisan');
             // chaisan.fixedToCamera = true;
