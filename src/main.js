@@ -309,7 +309,7 @@
               
                 $.ajax({
                     type: "POST",
-                    url: "http://haosiji.sdlg.cn:8090/goodDriver/1.0/driverGameInfo",
+                    url: "http://domain.com:8090/goodDriver/1.0/driverGameInfo",
                     data: JSON.stringify(data_hsj),
                     contentType: 'application/json; charset=UTF-8',
                     dataType: "json",
